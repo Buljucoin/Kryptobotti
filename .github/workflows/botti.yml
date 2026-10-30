@@ -1,0 +1,53 @@
+name: Kryptobotti
+
+on:
+  schedule:
+    # joka päivä klo 00.17 UTC (02.17 / 03.17 Suomen aikaa), kun Krakenin päiväkynttilä on sulkeutunut
+    - cron: "17 0 * * *"
+  workflow_dispatch: {}   # mahdollistaa ajon käsin Actions-välilehdeltä
+
+permissions:
+  contents: write   # tilan ja raportin tallennus repoon
+  issues: write     # ilmoitus kaupoista
+
+concurrency:
+  group: kryptobotti
+  cancel-in-progress: false
+
+jobs:
+  aja:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Päivän päätös
+        run: python bot.py
+
+      - name: Tallenna tila ja raportti
+        run: |
+          git config user.name "kryptobotti"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for f in state.json RAPORTTI.md paivakirja.csv kaupat.csv; do
+            [ -f "$f" ] && git add "$f"
+          done
+          if git diff --cached --quiet; then
+            echo "Ei muutoksia tallennettavaksi"
+          else
+            git commit -m "Botin päivitys $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Ilmoita kaupoista
+        if: hashFiles('ilmoitus.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Kryptobotti: paperikauppa $(date -u +%d.%m.%Y)" \
+            --body-file ilmoitus.md \
+            --assignee "${{ github.repository_owner }}"
