@@ -1,0 +1,11 @@
+{
+  "aloituspaaoma_eur": 10000,
+  "kulu_prosenttia": 0.4,
+  "nopea_ema": 10,
+  "hidas_ema": 30,
+  "trendiraja": 150,
+  "kohteet": [
+    { "nimi": "BTC", "kraken_pari": "XBTEUR", "osuus": 0.5 },
+    { "nimi": "ETH", "kraken_pari": "ETHEUR", "osuus": 0.5 }
+  ]
+}
