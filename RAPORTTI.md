@@ -1,19 +1,19 @@
 # Kryptobotin tilanne
 
-Päivitetty 03.11.2026 01:09 UTC · paperikauppa alkoi 2026-10-30 · sääntö EMA 10/30 + 150 pv trendiraja · kulu 0.4 % per kauppa
+Päivitetty 04.11.2026 01:10 UTC · paperikauppa alkoi 2026-10-30 · sääntö EMA 10/30 + 150 pv trendiraja · kulu 0.4 % per kauppa
 
 | Kohde | Hinta € | Ostoehto | Positio | Arvo € | Tuotto | Osta & pidä |
 |---|---|---|---|---|---|---|
-| BTC | 68 532,30 | ❌ lyhyt trendi laskussa | käteinen | 5 000,00 | +0,0 % | −1,5 % |
-| ETH | 2 010,28 | ❌ lyhyt trendi laskussa | käteinen | 5 000,00 | +0,0 % | −0,1 % |
+| BTC | 69 013,00 | ❌ lyhyt trendi laskussa | käteinen | 5 000,00 | +0,0 % | −0,8 % |
+| ETH | 2 027,20 | ❌ lyhyt trendi laskussa | käteinen | 5 000,00 | +0,0 % | +0,8 % |
 | **Yhteensä** | | | | **10 000,00** | **+0,0 %** | |
 
 ## Signaalien arvot
 
 | Kohde | EMA nopea | EMA hidas | Trendiraja |
 |---|---|---|---|
-| BTC | 70 537,25 | 71 758,39 | 63 084,95 |
-| ETH | 2 057,17 | 2 133,71 | 1 878,04 |
+| BTC | 70 260,11 | 71 581,27 | 63 192,21 |
+| ETH | 2 051,72 | 2 126,84 | 1 882,46 |
 
 ## Viimeisimmät kaupat
 
