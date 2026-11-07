@@ -1,6 +1,6 @@
 # Kryptobotin tilanne
 
-Päivitetty 07.11.2026 23:37 UTC · paperikauppa alkoi 2026-10-30 · sääntö EMA 10/30 + 150 pv trendiraja · kulu 0.4 % per kauppa
+Päivitetty 07.11.2026 23:41 UTC · paperikauppa alkoi 2026-10-30 · sääntö EMA 10/30 + 150 pv trendiraja · kulu 0.4 % per kauppa
 
 | Kohde | Hinta € | Ostoehto | Positio | Arvo € | Tuotto | Osta & pidä |
 |---|---|---|---|---|---|---|
@@ -21,6 +21,13 @@ Ei kauppoja vielä.
 
 ## Kraken (kuivaharjoitus, toimeksiantoja ei lähetetä)
 
-- API-avainta ei ole tallennettu GitHubin salaisuuksiin (KRAKEN_API_KEY ja KRAKEN_API_SECRET), joten Krakeniin ei otettu yhteyttä.
+- Tilin saldo: 100.00 € käteistä, 0.00000000 BTC, 0.00000000 ETH.
+- BTC: ei toimenpidettä, ei positiota, budjetti 150.00 €.
+- ETH: ei toimenpidettä, ei positiota, budjetti 150.00 €.
+
+| Kohde | Botin budjetti € | Botin omistus | Ostohinta € |
+|---|---|---|---|
+| BTC | 150,00 | 0.00000000 | – |
+| ETH | 150,00 | 0.00000000 | – |
 
 _Paperikauppa: mitään oikeaa rahaa ei liiku. Menneet tulokset eivät takaa tulevia._
