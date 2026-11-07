@@ -7,5 +7,13 @@
   "kohteet": [
     { "nimi": "BTC", "kraken_pari": "XBTEUR", "osuus": 0.5 },
     { "nimi": "ETH", "kraken_pari": "ETHEUR", "osuus": 0.5 }
-  ]
+  ],
+  "kraken": {
+    "tila": "kuiva",
+    "paaoma_eur": 300,
+    "max_kauppa_eur": 200,
+    "max_kauppoja_paivassa": 2,
+    "tayttoaika_min": 15,
+    "varalla_markkinahinta": true
+  }
 }
