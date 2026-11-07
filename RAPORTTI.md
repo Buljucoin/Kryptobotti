@@ -1,6 +1,6 @@
 # Kryptobotin tilanne
 
-Päivitetty 07.11.2026 01:04 UTC · paperikauppa alkoi 2026-10-30 · sääntö EMA 10/30 + 150 pv trendiraja · kulu 0.4 % per kauppa
+Päivitetty 07.11.2026 23:26 UTC · paperikauppa alkoi 2026-10-30 · sääntö EMA 10/30 + 150 pv trendiraja · kulu 0.4 % per kauppa
 
 | Kohde | Hinta € | Ostoehto | Positio | Arvo € | Tuotto | Osta & pidä |
 |---|---|---|---|---|---|---|
@@ -18,5 +18,9 @@ Päivitetty 07.11.2026 01:04 UTC · paperikauppa alkoi 2026-10-30 · sääntö E
 ## Viimeisimmät kaupat
 
 Ei kauppoja vielä.
+
+## Kraken (kuivaharjoitus, toimeksiantoja ei lähetetä)
+
+- API-avainta ei ole tallennettu GitHubin salaisuuksiin (KRAKEN_API_KEY ja KRAKEN_API_SECRET), joten Krakeniin ei otettu yhteyttä.
 
 _Paperikauppa: mitään oikeaa rahaa ei liiku. Menneet tulokset eivät takaa tulevia._
