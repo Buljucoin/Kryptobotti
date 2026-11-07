@@ -17,7 +17,7 @@ concurrency:
 jobs:
   aja:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 45   # oikeissa kaupoissa limiittitoimeksiannon täyttymistä odotetaan enintään 15 min per krypto
     steps:
       - uses: actions/checkout@v4
 
@@ -26,13 +26,17 @@ jobs:
           python-version: "3.12"
 
       - name: Päivän päätös
+        env:
+          KRAKEN_API_KEY: ${{ secrets.KRAKEN_API_KEY }}
+          KRAKEN_API_SECRET: ${{ secrets.KRAKEN_API_SECRET }}
         run: python bot.py
 
       - name: Tallenna tila ja raportti
+        if: always()
         run: |
           git config user.name "kryptobotti"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for f in state.json RAPORTTI.md paivakirja.csv kaupat.csv; do
+          for f in state.json RAPORTTI.md paivakirja.csv kaupat.csv oikeat_kaupat.csv; do
             [ -f "$f" ] && git add "$f"
           done
           if git diff --cached --quiet; then
@@ -42,12 +46,12 @@ jobs:
             git push
           fi
 
-      - name: Ilmoita kaupoista
-        if: hashFiles('ilmoitus.md') != ''
+      - name: Ilmoita
+        if: always() && hashFiles('ilmoitus.md') != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue create \
-            --title "Kryptobotti: paperikauppa $(date -u +%d.%m.%Y)" \
+            --title "Kryptobotti: ilmoitus $(date -u +%d.%m.%Y)" \
             --body-file ilmoitus.md \
             --assignee "${{ github.repository_owner }}"
