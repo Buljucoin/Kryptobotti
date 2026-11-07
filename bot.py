@@ -7,6 +7,8 @@ Sääntö (päiväkynttilät, päätös kun päivä on sulkeutunut):
   MYY   kun kumpi tahansa ehto lakkaa täyttymästä
 
 Kurssit: Krakenin julkinen rajapinta (EUR), ei vaadi tunnuksia.
+Oikea kaupankäynti Krakenissa: ks. kraken.py ja config.json -> "kraken" -> "tila"
+(pois / kuiva / oikea). Paperikauppa jatkuu aina rinnalla.
 Tila tallennetaan tiedostoon state.json, kaupat kaupat.csv:hen,
 päivittäinen loki paivakirja.csv:hen ja yhteenveto RAPORTTI.md:hen.
 
@@ -21,6 +23,8 @@ import os
 import sys
 import time
 import urllib.request
+
+import kraken
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -204,20 +208,38 @@ def run(args):
                     "kyllä" if s["ok"] else "ei", action, round(value, 2)])
         print(f"{name} {day}: hinta {price:.2f} €, ostoehto {'voimassa' if s['ok'] else 'ei'}, toimenpide: {action}, arvo {value:.2f} €")
 
+    # Kraken (kuivaharjoitus tai oikeat kaupat), ei vaikuta paperikauppaan
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    kr = kraken.step(cfg, st, market, today, record=lambda row: append_csv(
+        "oikeat_kaupat.csv", ["paiva", "kohde", "toimenpide", "hinta_eur", "maara", "summa_eur", "kulu_eur", "txid"], row))
+    for r in kr["rivit"]:
+        print("Kraken:", r)
+    if kr["virhe"]:
+        print("Kraken-virhe:", kr["virhe"])
+
     save_json("state.json", st)
-    write_report(cfg, st, market)
+    write_report(cfg, st, market, kr)
 
     # ilmoitus GitHub-issueksi (työnkulku lukee tämän tiedoston)
+    sections = []
     if events:
+        sections.append("**Paperikauppa** (ei oikeaa rahaa):\n\n" + "\n".join(f"- {e}" for e in events))
+    if kr["ilmoitukset"]:
+        sections.append("**Kraken:**\n\n" + "\n".join(f"- {e}" for e in kr["ilmoitukset"]))
+    if kr["virhe"]:
+        sections.append(f"**⚠️ Kraken-virhe:** {kr['virhe']}\n\nTarkista tilanne Kraken Prossa. "
+                        "Botti yrittää uudelleen seuraavana yönä.")
+    if sections:
         with open(path("ilmoitus.md"), "w", encoding="utf-8") as f:
-            f.write("Botti teki tänään seuraavat paperikaupat:\n\n")
-            f.write("\n".join(f"- {e}" for e in events))
+            f.write("\n\n".join(sections))
             f.write("\n\nKatso koko tilanne tiedostosta RAPORTTI.md.\n")
     elif os.path.exists(path("ilmoitus.md")):
         os.remove(path("ilmoitus.md"))
+    if kr["virhe"]:
+        sys.exit(1)  # GitHub lähettää epäonnistuneesta ajosta sähköpostin
 
 
-def write_report(cfg, st, market):
+def write_report(cfg, st, market, kr=None):
     lines = ["# Kryptobotin tilanne", "",
              f"Päivitetty {datetime.now(timezone.utc).strftime('%d.%m.%Y %H:%M')} UTC · "
              f"paperikauppa alkoi {st['aloitettu']} · sääntö EMA {cfg['nopea_ema']}/{cfg['hidas_ema']} + "
@@ -252,7 +274,24 @@ def write_report(cfg, st, market):
             lines.append("Ei kauppoja vielä.")
     else:
         lines.append("Ei kauppoja vielä.")
-    lines += ["", "_Paperikauppa: mitään oikeaa rahaa ei liiku. Menneet tulokset eivät takaa tulevia._", ""]
+    if kr and kr["tila"] != "pois":
+        nimi = {"kuiva": "kuivaharjoitus, toimeksiantoja ei lähetetä", "oikea": "OIKEAT KAUPAT"}.get(kr["tila"], kr["tila"])
+        lines += ["", f"## Kraken ({nimi})", ""]
+        lines += [f"- {r}" for r in kr["rivit"]]
+        if kr["virhe"]:
+            lines.append(f"- ⚠️ Virhe: {kr['virhe']}")
+        ks = st.get("kraken")
+        if ks:
+            lines += ["", "| Kohde | Botin budjetti € | Botin omistus | Ostohinta € |", "|---|---|---|---|"]
+            for a in cfg["kohteet"]:
+                p = ks["salkut"].get(a["nimi"])
+                if p:
+                    oh = fmt(p["ostohinta"]) if p["ostohinta"] else "–"
+                    lines.append(f"| {a['nimi']} | {fmt(p['budjetti_eur'])} | {p['maara']:.8f} | {oh} |")
+    if kr and kr["tila"] == "oikea":
+        lines += ["", "_Paperisalkku on simulaatio. Kraken-osio kuvaa oikeita kauppoja. Menneet tulokset eivät takaa tulevia._", ""]
+    else:
+        lines += ["", "_Paperikauppa: mitään oikeaa rahaa ei liiku. Menneet tulokset eivät takaa tulevia._", ""]
     with open(path("RAPORTTI.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
